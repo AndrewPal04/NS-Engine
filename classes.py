@@ -67,3 +67,15 @@ class Mob(pygame.sprite.Sprite):
 
     def update(self):
         pass
+
+class Particle(pygame.sprite.Sprite):
+    def __init__(self, image, scale, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        width = image.get_width()
+        height = image.get_height()
+        self.image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+
+    def update(self):
+        pass
