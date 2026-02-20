@@ -56,6 +56,8 @@ class Background(pygame.sprite.Sprite):
     def draw(self):
         self.surface.blit(self.image, (self.rect.x, self.rect.y))
 
+    
+
 class Mob(pygame.sprite.Sprite):
     def __init__(self, image, scale, x, y):
         pygame.sprite.Sprite.__init__(self)
