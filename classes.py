@@ -59,16 +59,34 @@ class Background(pygame.sprite.Sprite):
     
 
 class Mob(pygame.sprite.Sprite):
-    def __init__(self, image, scale, x, y):
+    def __init__(self, image, scale, x, y, speed):
         pygame.sprite.Sprite.__init__(self)
         width = image.get_width()
         height = image.get_height()
         self.image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
+        self.speed = speed
 
-    def update(self):
-        pass
+    def update(self, foods):
+        #Find nearest food
+        closest = foods[0]
+        distance = ((self.rect.centerx-closest.rect.centerx)**2 + (self.rect.centery-closest.rect.centery)**2)**0.5
+
+        for food in foods:
+            newdistance = ((self.rect.centerx-food.rect.centerx)**2 + (self.rect.centery-food.rect.centery)**2)**0.5
+            if newdistance < distance:
+                closest = food
+        #now chase closest
+        if closest.rect.centerx < self.rect.centerx:
+            self.rect.x -= self.speed
+        if closest.rect.centerx > self.rect.centerx:
+            self.rect.x += self.speed
+        if closest.rect.centery < self.rect.centery:
+            self.rect.y -= self.speed
+        if closest.rect.centery > self.rect.centery:
+            self.rect.y += self.speed
+
 
 class Particle(pygame.sprite.Sprite):
     def __init__(self, image, scale, x, y):
