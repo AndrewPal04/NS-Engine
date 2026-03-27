@@ -28,12 +28,12 @@ class Button(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.clicked = False
-    
+
     def pressing(self):
         self.surface.blit(self.image, (self.rect.x, self.rect.y))
         pressed = False
         pos = pygame.mouse.get_pos()
-    
+
         if self.rect.collidepoint(pos):
             if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
                 self.clicked = True
@@ -52,40 +52,64 @@ class Background(pygame.sprite.Sprite):
             image, (int(width * scale), int(height * scale)))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-    
+
     def draw(self):
         self.surface.blit(self.image, (self.rect.x, self.rect.y))
 
-    
+
 
 class Mob(pygame.sprite.Sprite):
-    def __init__(self, image, scale, x, y, speed):
+    def __init__(self, image, scale, x, y, color):
         pygame.sprite.Sprite.__init__(self)
         width = image.get_width()
         height = image.get_height()
         self.image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-        self.speed = speed
+        self.color = color
+        self.eaten = 0
+        self.origin = (x,y)
+        if self.color == "GREEN":
+            self.speed = 1
+            self.needed = 1
+            self.spawn = 2
+
+        elif self.color == "RED":
+            self.speed = 2
+            self.needed = 2
+            self.spawn = 3
 
     def update(self, foods):
-        #Find nearest food
-        closest = foods[0]
-        distance = ((self.rect.centerx-closest.rect.centerx)**2 + (self.rect.centery-closest.rect.centery)**2)**0.5
+        if self.eaten >= self.spawn:
+            #go back to origin
+            if self.origin[0] < self.rect.centerx:
+                self.rect.x -= self.speed
+            elif self.origin[0] > self.rect.centerx:
+                self.rect.x += self.speed
+            if self.origin[1] < self.rect.centery:
+                self.rect.y -= self.speed
+            elif self.origin[1] > self.rect.centery:
+                self.rect.y += self.speed
+        else:
+            #Find nearest food
+            if len(foods) > 0:
+                closest = foods[0]
+                distance = ((self.rect.centerx-closest.rect.centerx)**2 + (self.rect.centery-closest.rect.centery)**2)**0.5
 
-        for food in foods:
-            newdistance = ((self.rect.centerx-food.rect.centerx)**2 + (self.rect.centery-food.rect.centery)**2)**0.5
-            if newdistance < distance:
-                closest = food
-        #now chase closest
-        if closest.rect.centerx < self.rect.centerx:
-            self.rect.x -= self.speed
-        if closest.rect.centerx > self.rect.centerx:
-            self.rect.x += self.speed
-        if closest.rect.centery < self.rect.centery:
-            self.rect.y -= self.speed
-        if closest.rect.centery > self.rect.centery:
-            self.rect.y += self.speed
+                for food in foods:
+                    newdistance = ((self.rect.centerx-food.rect.centerx)**2 + (self.rect.centery-food.rect.centery)**2)**0.5
+                    if newdistance < distance:
+                        closest = food
+                        distance = newdistance
+                #now chase closest
+                if closest.rect.centerx < self.rect.centerx:
+                    self.rect.x -= self.speed
+                elif closest.rect.centerx > self.rect.centerx:
+                    self.rect.x += self.speed
+                if closest.rect.centery < self.rect.centery:
+                    self.rect.y -= self.speed
+                elif closest.rect.centery > self.rect.centery:
+                    self.rect.y += self.speed
 
 
 class Particle(pygame.sprite.Sprite):

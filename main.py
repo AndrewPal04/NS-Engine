@@ -3,6 +3,7 @@
 # Github repo: https://github.com/AndrewPal04/NS-Engine
 
 import pygame
+import random
 from classes import Text, Background, Mob, Button
 
 pygame.init()
@@ -53,7 +54,7 @@ redIMG = pygame.image.load("red.png")
 red = Background(screen, redIMG, 0.25, screen_width - 100, 350)
 
 foodIMG = pygame.image.load("food.png")
-food = Background(screen, foodIMG, 0.1, screen_width - 100, 510)
+food = Background(screen, foodIMG, 0.1, screen_width - 100, 540)
 
 plusIMG = pygame.image.load("plus.png")
 minusIMG = pygame.image.load("minus.png")
@@ -85,6 +86,10 @@ while True:
             quit()
     screen.fill((255, 255, 255))
     grid.draw()
+    
+    # var1 = pygame.draw.rect(screen, (0,0,0), (82, 80, 33, 33)) #for testing
+    # var2 = pygame.draw.rect(screen, (0,0,0), (575, screen_height-83, 33, 33))
+
 
     green.draw()
     red.draw()
@@ -101,7 +106,7 @@ while True:
         descG.draw()
         descG = Text(screen, "speed: 1", 40, (30,30,30), "segoeuibold", green.rect.x-100, green.rect.y + 90)
         descG.draw()
-        
+
     if red.rect.collidepoint(pos):
         descR = Text(screen, "needed food: 2", 40, (30,30,30), "segoeuibold", red.rect.x-100, red.rect.y + 30)
         descR.draw()
@@ -109,7 +114,7 @@ while True:
         descR.draw()
         descR = Text(screen, "speed: 2", 40, (30,30,30), "segoeuibold", red.rect.x-100, red.rect.y + 90)
         descR.draw()
-        
+
     if food.rect.collidepoint(pos):
         descF = Text(screen, "food count", 40, (30,30,30), "segoeuibold", food.rect.x-100, food.rect.y)
         descF.draw()
@@ -125,7 +130,7 @@ while True:
         maxText = Text(screen, "[Max]", 30, (30,30,30), "segoeuibold", green.rect.centerx, green.rect.centery + 135)
         maxText.draw()
 
-    
+
     if plusGREEN.pressing():
         if numGreens < 15:
             numGreens += 1
@@ -156,7 +161,6 @@ while True:
             redCount = Text(screen, str(numReds), 30, (30,30,30), "segoeuiblack", red.rect.centerx, red.rect.centery + 90)
 
     if plusFOOD.pressing():
-        if numFood < 40:
             numFood += 1
             foodCount = Text(screen, str(numFood), 30, (30,30,30), "segoeuiblack", food.rect.centerx, food.rect.centery + 20)
 
@@ -170,15 +174,21 @@ while True:
 
 #Simulation loop
 
-# You can do mobs.add(SPRITE), and later in the loop
-# you can do mobs.draw(), so only the sprites that are
-# in the group will be drawn on the screen.
 mobs = pygame.sprite.Group()
 day = 1
 
 foodsList = []
 for i in range(numFood):
-    foodsList.append(Background(screen, ))
+    foodsList.append(Background(screen, foodIMG, 0.05, random.randint(155, 510),random.randint(185, screen_height-180)))
+
+sprite_group = pygame.sprite.Group()
+
+for i in range(numGreens):
+    sprite_group.add(Mob(greenIMG, 0.05, 82+i*33, 80, "GREEN"))
+
+for i in range(numReds):
+    sprite_group.add(Mob(redIMG, 0.05, 82+i*33, screen_height - 85, "RED"))
+
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -191,19 +201,28 @@ while True:
     Text(screen, "Red count: "+ str(numReds), 40, (30,30,30), "segoeuibold", screen_width-200, 80).draw()
     Text(screen, "Food count: "+ str(numFood), 40, (30,30,30), "segoeuibold", screen_width-200, 110).draw()
     Text(screen, "Day: "+ str(day), 40, (30,30,30), "segoeuibold", grid.rect.centerx, grid.rect.top-40).draw()
+    
+    # var = pygame.draw.rect(screen, (0,0,0), (82, 80, 33, 33)) #for testing
+    for i in range(len(foodsList)):
+        foodsList[i].draw()
 
-
-
+    sprite_group.draw(screen)
+    for mob in sprite_group:
+        mob.update(foodsList)
+        for food in foodsList:
+            if pygame.sprite.collide_rect(mob, food):
+                mob.eaten += 1
+                foodsList.remove(food)
+    
     pygame.display.update()
     clock.tick(60)
 
 """
 Homework
-After completing the update method for your
-mobs, find a way to place the foods randomly on the screen,
-and have the mobs chase the foods. You should be able to see
-the mobs and the foods, but you don't have to
-check collision yet, or add days. Just get
-them moving around in the simulation
+Use the following link to begin working on your final presentation:
+https://docs.google.com/presentation/d/1SvjGVSDHrpJ3E__emNbEpPLVFicQvc0u9rTCRFXXVmg/edit?slide=id.p#slide=id.p
+Create as much as the presentation as you can, and you can optionally
+work on making the sprites move back to their original location after
+eating enough, and planning the next day.
 Good Luck!
 """
