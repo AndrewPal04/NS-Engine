@@ -238,10 +238,9 @@ while True:
                 mob.eaten += 1
                 foodsList.remove(food)
 
+
         if numFood != totalfood and mob.at_origin():
             home += 1
-
-
 
 
     if home == len(sprite_group):
@@ -285,7 +284,7 @@ while True:
         foodsList = []
         for i in range(totalfood):
             foodsList.append(Background(screen, foodIMG, 0.05, random.randint(155, 510),random.randint(185, screen_height-180)))
-    
+
         green.append(numGreens)
         red.append(numReds)
 
@@ -308,14 +307,3 @@ while True:
     pygame.display.update()
     clock.tick(60)
 
-
-
-"""
-Homework
-Use the following link to begin working on your final presentation:
-https://docs.google.com/presentation/d/1SvjGVSDHrpJ3E__emNbEpPLVFicQvc0u9rTCRFXXVmg/edit?slide=id.p#slide=id.p
-Create as much as the presentation as you can, and you can optionally
-work on making the sprites move back to their original location after
-eating enough, and planning the next day.
-Good Luck!
-"""
