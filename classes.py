@@ -68,7 +68,7 @@ class Mob(pygame.sprite.Sprite):
         self.rect.center = (x, y)
         self.color = color
         self.eaten = 0
-        self.origin = (x,y)
+        self.origin = (x, y)
         if self.color == "GREEN":
             self.speed = 1
             self.needed = 1
@@ -80,7 +80,7 @@ class Mob(pygame.sprite.Sprite):
             self.spawn = 3
 
     def update(self, foods):
-        if self.eaten >= self.spawn:
+        if self.eaten >= self.spawn or len(foods) == 0:
             #go back to origin
             if self.origin[0] < self.rect.centerx:
                 self.rect.x -= self.speed
@@ -110,6 +110,15 @@ class Mob(pygame.sprite.Sprite):
                     self.rect.y -= self.speed
                 elif closest.rect.centery > self.rect.centery:
                     self.rect.y += self.speed
+
+
+
+
+
+    def at_origin(self):
+        if self.rect.centerx == self.origin[0] and self.rect.centery == self.origin[1]:
+            return True
+
 
 
 class Particle(pygame.sprite.Sprite):

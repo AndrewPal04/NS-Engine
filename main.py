@@ -4,7 +4,9 @@
 
 import pygame
 import random
+import time
 from classes import Text, Background, Mob, Button
+import matplotlib.pyplot as plt
 
 pygame.init()
 
@@ -86,7 +88,7 @@ while True:
             quit()
     screen.fill((255, 255, 255))
     grid.draw()
-    
+
     # var1 = pygame.draw.rect(screen, (0,0,0), (82, 80, 33, 33)) #for testing
     # var2 = pygame.draw.rect(screen, (0,0,0), (575, screen_height-83, 33, 33))
 
@@ -116,10 +118,13 @@ while True:
         descR.draw()
 
     if food.rect.collidepoint(pos):
-        descF = Text(screen, "food count", 40, (30,30,30), "segoeuibold", food.rect.x-100, food.rect.y)
+        descF = Text(screen, "the maximum is depends", 40, (30,30,30), "segoeuibold", food.rect.x-100, food.rect.y-15)
+        descF.draw()
+        descF = Text(screen, "on the amount of mobs", 40, (30,30,30), "segoeuibold", food.rect.x-100, food.rect.y+15)
         descF.draw()
     if total > 4 and numFood > 7:
         if start.pressing():
+            time.sleep(0.2)
             break 
     else:
         grayStart.draw()
@@ -161,13 +166,14 @@ while True:
             redCount = Text(screen, str(numReds), 30, (30,30,30), "segoeuiblack", red.rect.centerx, red.rect.centery + 90)
 
     if plusFOOD.pressing():
-            numFood += 1
-            foodCount = Text(screen, str(numFood), 30, (30,30,30), "segoeuiblack", food.rect.centerx, food.rect.centery + 20)
+        numFood += 1
+        foodCount = Text(screen, str(numFood), 30, (30,30,30), "segoeuiblack", food.rect.centerx, food.rect.centery + 20)            
 
     if minusFOOD.pressing():
         if numFood > 0:
             numFood -= 1
             foodCount = Text(screen, str(numFood), 30, (30,30,30), "segoeuiblack", food.rect.centerx, food.rect.centery + 20)
+
 
     pygame.display.update()
     clock.tick(60)
@@ -177,8 +183,9 @@ while True:
 mobs = pygame.sprite.Group()
 day = 1
 
+totalfood = numFood
 foodsList = []
-for i in range(numFood):
+for i in range(totalfood):
     foodsList.append(Background(screen, foodIMG, 0.05, random.randint(155, 510),random.randint(185, screen_height-180)))
 
 sprite_group = pygame.sprite.Group()
@@ -189,6 +196,11 @@ for i in range(numGreens):
 for i in range(numReds):
     sprite_group.add(Mob(redIMG, 0.05, 82+i*33, screen_height - 85, "RED"))
 
+
+graphIMG = pygame.image.load("graph.png")
+graph = Button(screen, graphIMG, 0.15, screen_width - 150, screen_height - 75)
+green = [numGreens]
+red = [numReds]
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -200,22 +212,103 @@ while True:
     Text(screen, "Green count: "+ str(numGreens), 40, (30,30,30), "segoeuibold", screen_width-200, 50).draw()
     Text(screen, "Red count: "+ str(numReds), 40, (30,30,30), "segoeuibold", screen_width-200, 80).draw()
     Text(screen, "Food count: "+ str(numFood), 40, (30,30,30), "segoeuibold", screen_width-200, 110).draw()
+    Text(screen, "Total Foods: "+ str(totalfood), 40, (30,30,30), "segoeuibold", screen_width-200, 140).draw()
     Text(screen, "Day: "+ str(day), 40, (30,30,30), "segoeuibold", grid.rect.centerx, grid.rect.top-40).draw()
-    
-    # var = pygame.draw.rect(screen, (0,0,0), (82, 80, 33, 33)) #for testing
+
+
     for i in range(len(foodsList)):
         foodsList[i].draw()
 
     sprite_group.draw(screen)
+    home = 0
+    numGreens = 0
+    numReds = 0
+    numFood = len(foodsList)
+
     for mob in sprite_group:
+        if mob.color == "GREEN":
+            numGreens += 1
+        elif mob.color == "RED":
+            numReds += 1
+
+
         mob.update(foodsList)
         for food in foodsList:
             if pygame.sprite.collide_rect(mob, food):
                 mob.eaten += 1
                 foodsList.remove(food)
+
+        if numFood != totalfood and mob.at_origin():
+            home += 1
+
+
+
+
+    if home == len(sprite_group):
+        for mob in sprite_group:
+            if mob.eaten < mob.needed:
+                if mob.color == "RED":
+                    numReds -= 1
+                elif mob.color == "GREEN":
+                    numGreens -= 1
+
+            if mob.eaten == mob.spawn:
+                if mob.color == "RED":
+                    numReds += 1
+                elif mob.color == "GREEN":
+                    numGreens += 1
+
+        day += 1
+        for mob in sprite_group:
+            mob.kill()
+
+        for i in range(numGreens):
+            if i <= 15:
+                sprite_group.add(Mob(greenIMG, 0.05, 82+i*33, 80, "GREEN"))
+            elif i <= 31:
+                sprite_group.add(Mob(greenIMG, 0.05, 82+(i-16)*33, 113, "GREEN"))
+            elif i <= 47:
+                sprite_group.add(Mob(greenIMG, 0.05, 82+(i-32)*33, 146, "GREEN"))
+            else:
+                numGreens = 48
+
+        for i in range(numReds):
+            if i <= 15:
+                sprite_group.add(Mob(redIMG, 0.05, 82+i*33, screen_height - 85, "RED"))
+            elif i <= 31:
+                sprite_group.add(Mob(redIMG, 0.05, 82+(i-16)*33, screen_height - 118, "RED"))
+            elif i <= 47:
+                sprite_group.add(Mob(redIMG, 0.05, 82+(i-32)*33, screen_height - 151, "RED"))
+            else:
+                numReds = 48
+
+        foodsList = []
+        for i in range(totalfood):
+            foodsList.append(Background(screen, foodIMG, 0.05, random.randint(155, 510),random.randint(185, screen_height-180)))
     
+        green.append(numGreens)
+        red.append(numReds)
+
+    if graph.pressing():
+        x = list(range(1, len(green)+1))
+
+        plt.figure()
+        if green[0] != 0:
+            plt.plot(x, green, marker="o", color="green", label="green")
+        if red[0] != 0:
+            plt.plot(x, red, marker="o", color="red", label="red")
+
+        plt.xlabel("day")
+        plt.ylabel("amount")
+        plt.title("NS-Engine: running result (foods: "+str(totalfood)+")")
+        plt.legend()
+        plt.show()
+
+
     pygame.display.update()
     clock.tick(60)
+
+
 
 """
 Homework
