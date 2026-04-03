@@ -77,7 +77,7 @@ class Mob(pygame.sprite.Sprite):
         elif self.color == "RED":
             self.speed = 2
             self.needed = 2
-            self.spawn = 3
+            self.spawn = 4
 
     def update(self, foods):
         if self.eaten >= self.spawn or len(foods) == 0:

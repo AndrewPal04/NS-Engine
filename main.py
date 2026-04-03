@@ -1,4 +1,3 @@
-# Final Project:
 # NS Engine
 # Github repo: https://github.com/AndrewPal04/NS-Engine
 
@@ -306,4 +305,5 @@ while True:
 
     pygame.display.update()
     clock.tick(60)
+
 
