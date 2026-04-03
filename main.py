@@ -250,7 +250,7 @@ while True:
                 elif mob.color == "GREEN":
                     numGreens -= 1
 
-            if mob.eaten == mob.spawn:
+            if mob.eaten >= mob.spawn:
                 if mob.color == "RED":
                     numReds += 1
                 elif mob.color == "GREEN":
