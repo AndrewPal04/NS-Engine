@@ -117,10 +117,9 @@ while True:
         descR.draw()
 
     if food.rect.collidepoint(pos):
-        descF = Text(screen, "the maximum is depends", 40, (30,30,30), "segoeuibold", food.rect.x-100, food.rect.y-15)
+        descF = Text(screen, "food count", 40, (30,30,30), "segoeuibold", food.rect.x-100, food.rect.y)
         descF.draw()
-        descF = Text(screen, "on the amount of mobs", 40, (30,30,30), "segoeuibold", food.rect.x-100, food.rect.y+15)
-        descF.draw()
+
     if total > 4 and numFood > 7:
         if start.pressing():
             time.sleep(0.2)
