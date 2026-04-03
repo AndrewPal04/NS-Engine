@@ -111,7 +111,7 @@ while True:
     if red.rect.collidepoint(pos):
         descR = Text(screen, "needed food: 2", 40, (30,30,30), "segoeuibold", red.rect.x-100, red.rect.y + 30)
         descR.draw()
-        descR = Text(screen, "food to spawn: 3", 40, (30,30,30), "segoeuibold", red.rect.x-100, red.rect.y + 60)
+        descR = Text(screen, "food to spawn: 4", 40, (30,30,30), "segoeuibold", red.rect.x-100, red.rect.y + 60)
         descR.draw()
         descR = Text(screen, "speed: 2", 40, (30,30,30), "segoeuibold", red.rect.x-100, red.rect.y + 90)
         descR.draw()
